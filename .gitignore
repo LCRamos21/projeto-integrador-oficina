@@ -1,0 +1,10 @@
+# --- Ambiente Virtual Python ---
+venv/
+
+# --- Arquivos de Cache e Bytecode Python ---
+__pycache__/
+*.pyc
+
+# --- Bancos de Dados SQLite ---
+*.db
+*.db-journal

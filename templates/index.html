@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerenciamento de Ordens de Serviço</title>
+  <!-- Bootstrap CSS via CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- CSS customizado -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="{{ url_for('index') }}">Oficina</a>
+      <div class="d-flex">
+        <span class="navbar-text me-3">Olá, {{ session['username'] }}</span>
+        <a href="{{ url_for('logout') }}" class="btn btn-outline-light">Logout</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container my-4">
+    <h1 class="mb-4">Cadastro de Ordem de Serviço</h1>
+    
+    <!-- Formulário de Filtro e Pesquisa Avançada -->
+    <form method="GET" class="row g-3 mb-4">
+      <div class="col-md-6">
+        <input type="text" name="search" class="form-control" placeholder="Buscar por cliente" value="{{ search }}">
+      </div>
+      <div class="col-md-4">
+        <select name="status" class="form-select">
+          <option value="">Todos os Status</option>
+          <option value="em análise" {% if status_filter == 'em análise' %}selected{% endif %}>Em Análise</option>
+          <option value="aguardando peças" {% if status_filter == 'aguardando peças' %}selected{% endif %}>Aguardando Peças</option>
+          <option value="em reparo" {% if status_filter == 'em reparo' %}selected{% endif %}>Em Reparo</option>
+          <option value="concluído" {% if status_filter == 'concluído' %}selected{% endif %}>Concluído</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <button type="submit" class="btn btn-secondary w-100">Filtrar</button>
+      </div>
+    </form>
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <!-- Formulário de Cadastro de Ordem -->
+    <form action="{{ url_for('add_ordem') }}" method="POST" class="row g-3 mb-4">
+      <div class="col-md-6">
+        <label for="cliente" class="form-label">Nome do Cliente</label>
+        <input type="text" class="form-control" id="cliente" name="cliente" required>
+      </div>
+      <div class="col-md-6">
+        <label for="modelo" class="form-label">Modelo do Aparelho</label>
+        <input type="text" class="form-control" id="modelo" name="modelo" required>
+      </div>
+      <div class="col-12">
+        <label for="problema" class="form-label">Problema Relatado</label>
+        <textarea class="form-control" id="problema" name="problema" rows="3" required></textarea>
+      </div>
+      <div class="col-md-4">
+        <label for="data_entrada" class="form-label">Data de Entrada</label>
+        <input type="date" class="form-control" id="data_entrada" name="data_entrada" required>
+      </div>
+      <div class="col-md-4">
+        <label for="status" class="form-label">Status</label>
+        <select class="form-select" id="status" name="status">
+          <option value="em análise">Em Análise</option>
+          <option value="aguardando peças">Aguardando Peças</option>
+          <option value="em reparo">Em Reparo</option>
+          <option value="concluído">Concluído</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label for="valor" class="form-label">Valor do Serviço</label>
+        <input type="number" step="0.01" class="form-control" id="valor" name="valor">
+      </div>
+      <div class="col-12">
+        <button type="submit" class="btn btn-primary">Cadastrar Ordem</button>
+      </div>
+    </form>
+
+    <!-- Listagem de Ordens -->
+    <h2>Ordens Cadastradas</h2>
+    <div class="table-responsive">
+      <table class="table table-hover table-bordered">
+        <thead class="table-light">
+          <tr>
+            <th>ID</th>
+            <th>Cliente</th>
+            <th>Modelo</th>
+            <th>Problema</th>
+            <th>Data</th>
+            <th>Status</th>
+            <th>Valor</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for ordem in ordens %}
+          <tr>
+            <td>{{ ordem[0] }}</td>
+            <td>{{ ordem[1] }}</td>
+            <td>{{ ordem[2] }}</td>
+            <td>{{ ordem[3] }}</td>
+            <td>{{ ordem[4] }}</td>
+            <td>{{ ordem[5] }}</td>
+            <td>{{ ordem[6] }}</td>
+            <td>
+              <a href="{{ url_for('edit_ordem', id=ordem[0]) }}" class="btn btn-warning btn-sm">Editar</a>
+              <form action="{{ url_for('delete_ordem', id=ordem[0]) }}" method="POST" class="d-inline" onsubmit="return confirm('Tem certeza que deseja remover esta ordem?');">
+                <button type="submit" class="btn btn-danger btn-sm">Remover</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS via CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
