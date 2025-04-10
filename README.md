@@ -46,7 +46,38 @@ Foi desenvolvida uma **aplicação web utilizando Flask (Python)** para oferecer
     * CSS3 (Bootstrap 5 via CDN + `static/css/styles.css`)
     * JavaScript (Básico, para validação em `static/js/script.js`)
 * **Ambiente:** Python Virtual Environment (`venv`)
+* Controle de Versão: Git, GitHub
 
+## 💾 Estrutura do Banco de Dados
+
+O sistema utiliza SQLite para persistência de dados... (Diagrama Entidade-Relacionamento):
+
+```mermaid  <-- Esta linha indica ao GitHub que é um diagrama Mermaid
+%% Diagrama Entidade-Relacionamento para o Sistema de Ordens de Serviço
+
+erDiagram
+    %% Define a relação: Um USER pode registrar zero ou muitas ORDENS
+    USERS ||--o{ ORDENS : registra
+
+    %% Define a entidade USERS (tabela users)
+    USERS {
+        INTEGER id PK "Chave Primária (ID do Usuário)"
+        TEXT username UK "Nome de usuário (Único, Obrigatório)"
+        TEXT password "Senha (Obrigatória)"
+    }
+
+    %% Define a entidade ORDENS (tabela ordens)
+    ORDENS {
+        INTEGER id PK "Chave Primária (ID da Ordem)"
+        TEXT cliente "Nome do Cliente (Obrigatório)"
+        TEXT modelo "Modelo do Equipamento (Obrigatório)"
+        TEXT problema "Descrição do Problema (Obrigatório)"
+        TEXT data_entrada "Data de Entrada (Obrigatória,eterminate-MM-DD)"
+        TEXT status "Status da Ordem (Obrigatório)"
+        REAL valor "Valor do Serviço (Opcional)"
+        INTEGER user_id FK "Chave Estrangeira (ID do Usuário que registrou, Obrigatório)"
+    }
+```
 ## 🚀 Como Executar o Projeto Localmente
 
 1.  **Clone o repositório:**
@@ -78,13 +109,16 @@ Foi desenvolvida uma **aplicação web utilizando Flask (Python)** para oferecer
         ```bash
         python app.py
         ```
+Observação: Ao ser executado pela primeira vez, o `app.py` criará automaticamente os arquivos de banco de dados SQLite (`users.db` e `database.db`) e as tabelas necessárias (`users`, `ordens`), caso ainda não existam, usando comandos `CREATE TABLE IF NOT EXISTS`. O arquivo `schema.sql` no repositório serve como documentação formal da estrutura.
+        
 6.  **Acesse no navegador:** Abra seu navegador e vá para `http://127.0.0.1:5000` (ou o endereço indicado no terminal).
     * Você precisará se registrar para acessar a área de gerenciamento de ordens.
 
 ## 📈 Status do Projeto
 
 * Funcionalidades de autenticação, CRUD de ordens, busca e filtro implementadas e funcionais.
-* Atende aos requisitos definidos para os Módulos 1 e 2 do Projeto Integrador.
+* Modelo de dados formalizado e schema SQL (`schema.sql`) criado.
+* Atende aos requisitos definidos para os Módulos 1, 2 e 3 do Projeto Integrador II.
 
 ## 🔮 Possíveis Melhorias Futuras
 
